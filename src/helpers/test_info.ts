@@ -135,6 +135,18 @@ export function buildTestName(info: ReturnType<typeof findTestInfo> | null): str
   return testMethodName;
 }
 
+export function buildTestFunctionName(info: ReturnType<typeof findTestInfo> | null): string | null {
+  if (!info) { return null; }
+  const { testMethodName, suiteRunnerName } = info;
+
+  // Receiver method with suite runner: TestRunner/TestMethod
+  if (suiteRunnerName && testMethodName) {
+    return `${suiteRunnerName}/${testMethodName}/`;
+  }
+
+  return testMethodName;
+}
+
 // Helper function to convert string to snake_case
 export function toSnakeCase(input: string): string {
   // 1. Trim leading/trailing whitespace

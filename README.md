@@ -2,10 +2,11 @@
 
 This VSCode extension enables the following key bindings to run and debug Go table-driven design tests.
 
-| Execution | Keybinding |
-|---|---|
-| Run test | cmd+j | 
-| Run test debugger | cmd+shift+j |
+| Execution | Keybinding | Description
+|---|---|---|
+| Run test | cmd+j | Run the test that I'm looking at (context-aware). Great for targeting a single test.
+| Run test function | cmd+u | Run all the tests within the test function
+| Run test debugger | cmd+shift+j | Works similar to Run test. Except, it runs with the debugger
 
 ### Run Test
 The extension executes the test with `go test`
@@ -84,11 +85,11 @@ for _, tc := range testCases {
 Based on where your cursor is, the test runner will execute the test method accordingly
 ```go
 func (s *Suite) TestMethod() {
-  testCases := map[string]struct{    // ← Cursor here: runs Suite/TestMethod
+  testCases := map[string]struct{    // ← cmd+j Cursor here: runs Suite/TestMethod/
       // ...
   }{
-    "test case 1": {               // ← Cursor here: runs Suite/TestMethod/test_case_1
-      field: "value",
+    "test case 1": {               // ← cmd+j Cursor here: runs Suite/TestMethod/test_case_1
+      field: "value",             // ← cmd+u Cursor here: runs Suite/TestMethod/
     },
   }
                                       
@@ -100,7 +101,7 @@ func (s *Suite) TestMethod() {
 }
 
 func TestSuite(t *testing.T) {
-	suite.Run(t, new(Suite)) // ← Cursor here: runs Suite
+	suite.Run(t, new(Suite)) // ← cmd+j Cursor here: runs Suite
 }
 ```
 
@@ -122,6 +123,11 @@ You can edit the keybindings by pasting this in Code -> Preferences > Keyboard S
   "command": "goTDDRunner.debugTest",
   "key": "cmd+shift+m",
   "when": "editorTextFocus && editorLangId == 'go'"
+},
+{
+  "command": "goTDDRunner.runTestFunction",
+  "key": "cmd+b",
+  "when": "editorLangId == 'go'"
 }
 ```
 

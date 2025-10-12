@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { findTestInfo, buildTestName, toSnakeCase } from './test_info';
+import { findTestInfo, buildTestName, buildTestFunctionName, toSnakeCase } from './test_info';
 
 function createMockDocument(content: string): vscode.TextDocument {
 	const lines = content.split('\n');
@@ -145,18 +145,18 @@ func (s *MyTestSuite) TestSomething() {
 		it('should find suite runner function', () => {
 			const content = `package mypackage
 
-func (s *TriggerAttributeTestSuite) TestGetAllAttributesEmptyNoError() {
+func (s *MySuite) TestNoError() {
 	// test code
 }
 
-func TestNewTriggerAttributeService(t *testing.T) {
-	suite.Run(t, new(TriggerAttributeTestSuite))
+func TestMySuite(t *testing.T) {
+	suite.Run(t, new(MySuite))
 }`;
 			const doc = createMockDocument(content);
 			const info = findTestInfo(doc, 3);
 			const testName = buildTestName(info);
 
-			expect(testName).toBe('TestNewTriggerAttributeService/TestGetAllAttributesEmptyNoError/');
+			expect(testName).toBe('TestMySuite/TestNoError/');
 		});
 
 		it('should build test name with suite runner', () => {
@@ -233,14 +233,14 @@ func TestMySuite(t *testing.T) {
 		it('should detect suite runner with slice-based subtest', () => {
 			const content = `package mypackage
 
-func (s *TicketTestSuite) TestUpdateHandler() {
+func (s *TicketSuite) TestUpdate() {
 	tests := []struct {
 		name     string
 		preFn    func()
 		input    string
 	}{
 		{
-			name:  "do nothing - when is testing ticket",
+			name:  "do nothing - when is testing",
 			preFn: func() {},
 			input: "test",
 		},
@@ -248,36 +248,36 @@ func (s *TicketTestSuite) TestUpdateHandler() {
 }
 
 func TestTicketSuite(t *testing.T) {
-	suite.Run(t, new(TicketTestSuite))
+	suite.Run(t, new(TicketSuite))
 }`;
 			const doc = createMockDocument(content);
 			const info = findTestInfo(doc, 10);
 			const testName = buildTestName(info);
 
-			expect(testName).toBe('TestTicketSuite/TestUpdateHandler/do_nothing_-_when_is_testing_ticket');
+			expect(testName).toBe('TestTicketSuite/TestUpdate/do_nothing_-_when_is_testing');
 		});
 
 		it('should build test name with suite runner and slice subtest', () => {
 			const content = `package mypackage
 
-func (s *TicketTestSuite) TestUpdateHandler() {
+func (s *MySuite) TestUpdate() {
 	tests := []struct {
 		name  string
 	}{
 		{
-			name: "do nothing - when is testing ticket",
+			name: "do nothing - when is testing",
 		},
 	}
 }
 
-func TestTicketSuite(t *testing.T) {
-	suite.Run(t, new(TicketTestSuite))
+func TestMyTestSuite(t *testing.T) {
+	suite.Run(t, new(MySuite))
 }`;
 			const doc = createMockDocument(content);
 			const info = findTestInfo(doc, 8);
 			const testName = buildTestName(info);
 
-			expect(testName).toBe('TestTicketSuite/TestUpdateHandler/do_nothing_-_when_is_testing_ticket');
+			expect(testName).toBe('TestMyTestSuite/TestUpdate/do_nothing_-_when_is_testing');
 		});
 	});
 
@@ -360,5 +360,80 @@ describe('#toSnakeCase', () => {
 
 	it('should handle special characters with spaces', () => {
 		expect(toSnakeCase('test (case) [1]')).toBe('test_(case)_[1]');
+	});
+});
+
+describe('#buildTestFunctionName', () => {
+	it('should return standalone test function name', () => {
+		const content = `package mypackage
+
+func TestMyFunction(t *testing.T) {
+	// test code
+}`;
+		const doc = createMockDocument(content);
+		const info = findTestInfo(doc, 3);
+		const testName = buildTestFunctionName(info);
+
+		expect(testName).toBe('TestMyFunction');
+	});
+
+	it('should return standalone function name even with subtest in cursor', () => {
+		const content = `package mypackage
+
+func TestMyFunction(t *testing.T) {
+	testCases := map[string]struct{
+		"test case 1": {
+			expected: "value",
+		},
+	}
+}`;
+		const doc = createMockDocument(content);
+		const info = findTestInfo(doc, 5);
+		const testName = buildTestFunctionName(info);
+
+		expect(testName).toBe('TestMyFunction');
+	});
+
+	it('should return suite runner with test method', () => {
+		const content = `package mypackage
+
+func (s *TestSuite) TestNoError() {
+	// test code
+}
+
+func TestService(t *testing.T) {
+	suite.Run(t, new(TestSuite))
+}`;
+		const doc = createMockDocument(content);
+		const info = findTestInfo(doc, 3);
+		const testName = buildTestFunctionName(info);
+
+		expect(testName).toBe('TestService/TestNoError/');
+	});
+
+	it('should return suite runner with test method even with subtest', () => {
+		const content = `package mypackage
+
+func (s *MyTestSuite) TestWithSubtests() {
+	testCases := map[string]struct{
+		"subtest 1": {
+			value: 123,
+		},
+	}
+}
+
+func TestMySuite(t *testing.T) {
+	suite.Run(t, new(MyTestSuite))
+}`;
+		const doc = createMockDocument(content);
+		const info = findTestInfo(doc, 5);
+		const testName = buildTestFunctionName(info);
+
+		expect(testName).toBe('TestMySuite/TestWithSubtests/');
+	});
+
+	it('should return null when info is null', () => {
+		const testName = buildTestFunctionName(null);
+		expect(testName).toBe(null);
 	});
 });

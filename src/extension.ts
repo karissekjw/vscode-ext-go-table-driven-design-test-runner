@@ -1,15 +1,19 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
-import { runTest } from './commands/test_runner';
+import { runTest, runTestFunction } from './commands/test_runner';
 import { runTestDebugger, cleanupDebugSession } from './commands/test_debugger';
 import * as constants from './constants';
 
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
 export function activate(context: vscode.ExtensionContext) {
-	const runSubtest = vscode.commands.registerCommand('goTDDRunner.runTest', async () => {
+	const runSubtest = vscode.commands.registerCommand('goTDDRunner.runTest', () => {
 		runTest();
+	});
+
+	const runFunction = vscode.commands.registerCommand('goTDDRunner.runTestFunction', () => {
+		runTestFunction();
 	});
 
 	const debugCmd = vscode.commands.registerCommand('goTDDRunner.debugTest', async () => {
@@ -29,7 +33,7 @@ export function activate(context: vscode.ExtensionContext) {
 		}
 	});
 
-	context.subscriptions.push(runSubtest, debugCmd, debugSessionListener);
+	context.subscriptions.push(runSubtest, runFunction, debugCmd, debugSessionListener);
 }
 
 // This method is called when your extension is deactivated
