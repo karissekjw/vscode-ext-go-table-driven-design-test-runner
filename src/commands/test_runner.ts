@@ -21,7 +21,7 @@ export function runTest() {
 
   const absDirPath = path.dirname(document.uri.fsPath);
 
-  const testCmd = `go test -timeout 30s -run ${testPath} -v ${absDirPath}`;
+  const testCmd = `go test -run ${testPath} -v ${absDirPath}`;
 
   const terminal = vscode.window.terminals.find(t => t.name === TERMINAL_NAME) || vscode.window.createTerminal(TERMINAL_NAME);
   terminal.show();
@@ -47,7 +47,7 @@ export function runTestFunction() {
 
   const absDirPath = path.dirname(document.uri.fsPath);
 
-  const testCmd = `go test -timeout 30s -run ${testPath} -v ${absDirPath}`;
+  const testCmd = `go test -run ${testPath} -v ${absDirPath}`;
 
   const terminal = vscode.window.terminals.find(t => t.name === TERMINAL_NAME) || vscode.window.createTerminal(TERMINAL_NAME);
   terminal.show();
