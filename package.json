@@ -13,23 +13,22 @@
   "contributes": {
     "commands": [
       {
-        "command": "goSubtestRunner.runSubtest",
+        "command": "goTDDRunner.runTest",
         "title": "Run Go Subtest"
       },
       {
-      "command": "goSubtestRunner.debugSubtest",
-      "title": "Debug Go Subtest"
+        "command": "goTDDRunner.debugTest",
+        "title": "Debug Go Subtest"
       }
     ],
-    
     "keybindings": [
       {
-        "command": "goSubtestRunner.runSubtest",
+        "command": "goTDDRunner.runTest",
         "key": "cmd+j",
         "when": "editorLangId == go"
       },
       {
-        "command": "goSubtestRunner.debugSubtest",
+        "command": "goTDDRunner.debugTest",
         "key": "cmd+shift+j",
         "when": "editorTextFocus && editorLangId == 'go'"
       }
@@ -42,24 +41,25 @@
     "watch:esbuild": "node esbuild.js --watch",
     "watch:tsc": "tsc --noEmit --watch --project tsconfig.json",
     "package": "pnpm run check-types && pnpm run lint && node esbuild.js --production",
-    "compile-tests": "tsc -p . --outDir out",
-    "watch-tests": "tsc -p . -w --outDir out",
-    "pretest": "pnpm run compile-tests && pnpm run compile && pnpm run lint",
     "check-types": "tsc --noEmit",
     "lint": "eslint src",
-    "test": "vscode-test"
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage"
   },
   "devDependencies": {
-    "@types/vscode": "^1.105.0",
-    "@types/mocha": "^10.0.10",
+    "@types/jest": "^30.0.0",
     "@types/node": "22.x",
+    "@types/vscode": "^1.105.0",
     "@typescript-eslint/eslint-plugin": "^8.45.0",
     "@typescript-eslint/parser": "^8.45.0",
-    "eslint": "^9.36.0",
-    "esbuild": "^0.25.10",
-    "npm-run-all": "^4.1.5",
-    "typescript": "^5.9.3",
     "@vscode/test-cli": "^0.0.11",
-    "@vscode/test-electron": "^2.5.2"
+    "@vscode/test-electron": "^2.5.2",
+    "esbuild": "^0.25.10",
+    "eslint": "^9.36.0",
+    "jest": "^30.2.0",
+    "npm-run-all": "^4.1.5",
+    "ts-jest": "^29.4.5",
+    "typescript": "^5.9.3"
   }
 }

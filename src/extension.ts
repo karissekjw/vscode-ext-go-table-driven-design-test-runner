@@ -8,11 +8,11 @@ import * as constants from './constants';
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
 export function activate(context: vscode.ExtensionContext) {
-	const runSubtest = vscode.commands.registerCommand('goSubtestRunner.runSubtest', async () => {
+	const runSubtest = vscode.commands.registerCommand('goTDDRunner.runTest', async () => {
 		runTest();
 	});
 
-	const debugCmd = vscode.commands.registerCommand('goSubtestRunner.debugSubtest', async () => {
+	const debugCmd = vscode.commands.registerCommand('goTDDRunner.debugTest', async () => {
 		await runTestDebugger();
 	});
 

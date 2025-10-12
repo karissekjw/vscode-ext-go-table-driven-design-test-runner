@@ -25,7 +25,7 @@ export function runTest() {
     return;
   }
   let testPath = buildTestName(result);
-  
+
   const absDirPath = path.dirname(document.uri.fsPath);
 
   const testCmd = `go test -timeout 30s -run ${testPath} -v ${absDirPath}`;
