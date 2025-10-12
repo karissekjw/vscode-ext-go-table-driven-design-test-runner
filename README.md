@@ -1,71 +1,133 @@
-# go-table-driven-design-test-runner README
+# Go Table Driven Design Test Runner
 
-This is the README for your extension "go-table-driven-design-test-runner". After writing up a brief description, we recommend including the following sections.
+This VSCode extension enables the following key bindings to run and debug Go table-driven design tests.
+
+| Execution | Keybinding |
+|---|---|
+| Run test | cmd+j | 
+| Run test debugger | cmd+shift+j |
+
+### Run Test
+The extension executes the test with `go test`
+
+![alt text](https://raw.githubusercontent.com/karissekjw/image-cloud/0ac38cca6f9f369ea9a7c55a3077387099bd6a10/test_runner_vscode_ext.gif)
+
+### Run Test Debugger
+
+The extension launches a debugger processor and hooks up with the VSCode IDE.
+
+![alt text](https://raw.githubusercontent.com/karissekjw/image-cloud/0ac38cca6f9f369ea9a7c55a3077387099bd6a10/test_debugger_vscode_ext.gif)
 
 ## Features
 
-Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
+This extension runs table-driven design tests that are aligned with the following conventions:
+1. Using a Map to Store Test Cases
+```go
+testCases := map[string]struct {
+  preFn     func()
+  testInput input
+  expected  int
+}{
+  "test case 1": {
+    testInput: input{a: 1, b: 2},
+    expected:  3,
+    preFn:     func() {},
+  },
+  "test case 2": {
+    testInput: input{a: 3, b: 2},
+    expected:  5,
+    preFn:     func() {},
+  },
+}
 
-For example if there is an image subfolder under your extension project workspace:
+for name, tc := range testCases {
+  s.Run(name, func() {
+    tc.preFn()
+    actual := addition(tc.testInput.a, tc.testInput.b)
+    s.Equal(tc.expected, actual)
+  })
+}
+```
 
-\!\[feature X\]\(images/feature-x.png\)
+2. Using a Slice with `name` to Store Test Cases
+```go
+testCases := []struct {
+  name      string
+  preFn     func()
+  testInput input
+  expected  int
+}{
+  {
+    name:      "test case 1",
+    testInput: input{a: 1, b: 2},
+    expected:  3,
+    preFn:     func() {},
+  },
+  {
+    name:      "test case 2",
+    testInput: input{a: 3, b: 2},
+    expected:  5,
+    preFn:     func() {},
+  },
+}
 
-> Tip: Many popular extensions utilize animations. This is an excellent way to show off your extension! We recommend short, focused animations that are easy to follow.
+for _, tc := range testCases {
+  s.Run(tc.name, func() {
+    tc.preFn()
+    actual := addition(tc.testInput.a, tc.testInput.b)
+    s.Equal(tc.expected, actual)
+  })
+}
+```
+
+### How does it work?
+Based on where your cursor is, the test runner will execute the test method accordingly
+```go
+func (s *Suite) TestMethod() {
+  testCases := map[string]struct{    // ← Cursor here: runs Suite/TestMethod
+      // ...
+  }{
+    "test case 1": {               // ← Cursor here: runs Suite/TestMethod/test_case_1
+      field: "value",
+    },
+  }
+                                      
+  for name, tc := range testCases {
+    s.Run(name, func() {
+      tc.preFn()                
+    })
+  }
+}
+
+func TestSuite(t *testing.T) {
+	suite.Run(t, new(Suite)) // ← Cursor here: runs Suite
+}
+```
 
 ## Requirements
 
-If you have any requirements or dependencies, add a section describing those and how to install and configure them.
+- delve https://github.com/go-delve/delve
+  - This is required to run the debugger.
 
-## Extension Settings
+## Keybindings
+You can edit the keybindings by pasting this in Code -> Preferences > Keyboard Shortcuts -> keybindings.json
 
-Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
+```json
+{
+  "command": "goTDDRunner.runTest",
+  "key": "cmd+m",
+  "when": "editorLangId == go"
+},
+{
+  "command": "goTDDRunner.debugTest",
+  "key": "cmd+shift+m",
+  "when": "editorTextFocus && editorLangId == 'go'"
+}
+```
 
-For example:
+## Contributions
+This project is still in its early stages so contributions are welcome 🤗
 
-This extension contributes the following settings:
+Feel free to create an issue if you have any feature requests ✍️ or bugs to report 🐛. If you're up for it you can open a PR to make a contribution! 
 
-* `myExtension.enable`: Enable/disable this extension.
-* `myExtension.thing`: Set to `blah` to do something.
 
-## Known Issues
-
-Calling out known issues can help limit users opening duplicate issues against your extension.
-
-## Release Notes
-
-Users appreciate release notes as you update your extension.
-
-### 1.0.0
-
-Initial release of ...
-
-### 1.0.1
-
-Fixed issue #.
-
-### 1.1.0
-
-Added features X, Y, and Z.
-
----
-
-## Following extension guidelines
-
-Ensure that you've read through the extensions guidelines and follow the best practices for creating your extension.
-
-* [Extension Guidelines](https://code.visualstudio.com/api/references/extension-guidelines)
-
-## Working with Markdown
-
-You can author your README using Visual Studio Code. Here are some useful editor keyboard shortcuts:
-
-* Split the editor (`Cmd+\` on macOS or `Ctrl+\` on Windows and Linux).
-* Toggle preview (`Shift+Cmd+V` on macOS or `Shift+Ctrl+V` on Windows and Linux).
-* Press `Ctrl+Space` (Windows, Linux, macOS) to see a list of Markdown snippets.
-
-## For more information
-
-* [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
-* [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
-
-**Enjoy!**
