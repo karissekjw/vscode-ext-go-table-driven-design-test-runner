@@ -12,7 +12,6 @@ export function findTestInfo(document: vscode.TextDocument, cursorLine: number) 
   for (let i = cursorLine; i >= 0; i--) {
     const line = document.lineAt(i).text.trim();
 
-    // Receiver method
     const receiverMatch = line.match(/func\s+\(\w+\s+\*\s*(\w+)\)\s+(Test\w+)\s*\(/);
     if (receiverMatch && !suiteMethod) {
       suiteType = receiverMatch[1];
@@ -21,7 +20,6 @@ export function findTestInfo(document: vscode.TextDocument, cursorLine: number) 
       break;
     }
 
-    // Standalone test function
     const funcMatch = line.match(/func\s+(Test\w+)\s*\(.*\*testing\.T\)/);
     if (funcMatch && !suiteMethod) {
       suiteMethod = funcMatch[1];
@@ -30,7 +28,6 @@ export function findTestInfo(document: vscode.TextDocument, cursorLine: number) 
     }
   }
 
-  // If no suite method found, return null
   if (!suiteMethod) {
     return null;
   }
@@ -39,7 +36,6 @@ export function findTestInfo(document: vscode.TextDocument, cursorLine: number) 
   for (let i = cursorLine; i >= suiteStartLine; i--) {
     const line = document.lineAt(i).text.trim();
 
-    // Map key style
     const mapKeyMatch = line.match(/"(.+?)":\s*{/);
     if (mapKeyMatch) {
       subtestName = mapKeyMatch[1];

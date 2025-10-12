@@ -10,6 +10,12 @@ export function runTest() {
   }
 
   const document = editor.document;
+
+  if (!document.fileName.endsWith('_test.go')) {
+    vscode.window.showErrorMessage('This command only works in Go test files (_test.go)');
+    return;
+  }
+
   const cursorLine = editor.selection.active.line;
 
   const result = findTestInfo(document, cursorLine);
@@ -19,11 +25,9 @@ export function runTest() {
     return;
   }
   let testPath = buildTestName(result);
-
-  // Absolute directory path
+  
   const absDirPath = path.dirname(document.uri.fsPath);
 
-  // Final command
   const testCmd = `go test -timeout 30s -run ${testPath} -v ${absDirPath}`;
 
   // Run in terminal

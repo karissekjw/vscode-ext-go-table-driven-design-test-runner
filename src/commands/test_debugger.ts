@@ -11,6 +11,12 @@ export async function runTestDebugger() {
   const editor = vscode.window.activeTextEditor;
   if (!editor) { return; }
   const document = editor.document;
+
+  if (!document.fileName.endsWith('_test.go')) {
+    vscode.window.showErrorMessage('This command only works in Go test files (_test.go)');
+    return;
+  }
+
   const cursorLine = editor.selection.active.line;
 
   const info = findTestInfo(document, cursorLine);
