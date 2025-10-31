@@ -150,7 +150,7 @@ func (s *MySuite) TestNoError() {
 }
 
 func TestMySuite(t *testing.T) {
-	suite.Run(t, new(MySuite))
+	s.Run(t, new(MySuite))
 }`;
 			const doc = createMockDocument(content);
 			const info = findTestInfo(doc, 3);

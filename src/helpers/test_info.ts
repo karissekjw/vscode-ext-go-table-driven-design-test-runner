@@ -64,7 +64,7 @@ function findSuiteRunner(document: vscode.TextDocument, suiteType: string): stri
   for (let i = 0; i < document.lineCount; i++) {
     const line = document.lineAt(i).text.trim();
 
-    const suiteRunMatch = line.match(/suite\.Run\s*\(\s*\w+\s*,\s*new\s*\(\s*(\w+)\s*\)\s*\)/);
+    const suiteRunMatch = line.match(/.Run\s*\(\s*\w+\s*,\s*new\s*\(\s*(\w+)\s*\)\s*\)/);
     if (suiteRunMatch && suiteRunMatch[1] === suiteType) {
       // Found suite.Run, now find the test function it's inside
       return findEnclosingTestFunction(document, i);
