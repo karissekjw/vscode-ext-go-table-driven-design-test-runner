@@ -21,7 +21,7 @@ The extension launches a debugger processor and hooks up with the VSCode IDE.
 
 ## Features
 
-This extension runs table-driven design tests that are aligned with the following conventions:
+This extension runs table-driven design tests that are most compatible if you are using the https://github.com/stretchr/testify package for your TDD testing. In general, it is aligned with the following conventions:
 1. Using a Map to Store Test Cases
 ```go
 testCases := map[string]struct {
@@ -92,10 +92,10 @@ func (s *Suite) TestMethod() {
       field: "value",             // ← cmd+u Cursor here: runs Suite/TestMethod/
     },
   }
-                                      
+
   for name, tc := range testCases {
     s.Run(name, func() {
-      tc.preFn()                
+      tc.preFn()
     })
   }
 }
@@ -134,6 +134,6 @@ You can edit the keybindings by pasting this in Code -> Preferences > Keyboard S
 ## Contributions
 This project is still in its early stages so contributions are welcome 🤗
 
-Feel free to create an issue if you have any feature requests ✍️ or bugs to report 🐛. If you're up for it you can open a PR to make a contribution! 
+Feel free to create an issue if you have any feature requests ✍️ or bugs to report 🐛. If you're up for it you can open a PR to make a contribution!
 
 
