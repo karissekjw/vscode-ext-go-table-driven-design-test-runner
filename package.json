@@ -4,14 +4,19 @@
   "icon": "images/logo.png",
   "displayName": "Go Table-Driven-Design Test Runner",
   "description": "This VSCode extension enables the following key bindings to run and debug Go table-driven design tests.",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "engines": {
     "vscode": "^1.105.0"
   },
   "author": {
     "name": "Karisse Khoo"
   },
-  "keywords": ["go", "test", "tdd", "table-driven-design"],
+  "keywords": [
+    "go",
+    "test",
+    "tdd",
+    "table-driven-design"
+  ],
   "categories": [
     "Testing",
     "Debuggers"
