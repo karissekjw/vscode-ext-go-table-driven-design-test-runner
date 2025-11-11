@@ -63,7 +63,7 @@ func TestMyFunction(t *testing.T) {
 			const info = findTestInfo(doc, 9);
 			const testName = buildTestName(info);
 
-			expect(testName).toBe('TestMyFunction/subtest_1');
+			expect(testName).toBe('TestMyFunction/subtest_1/');
 		});
 
 		it('should build test name with snake_case subtest', () => {
@@ -80,7 +80,7 @@ func TestMyFunction(t *testing.T) {
 			const info = findTestInfo(doc, 5);
 			const testName = buildTestName(info);
 
-			expect(testName).toBe('TestMyFunction/test_case_1');
+			expect(testName).toBe('TestMyFunction/test_case_1/');
 		});
 	});
 
@@ -105,7 +105,7 @@ func TestMyFunction(t *testing.T) {
 			const info = findTestInfo(doc, 9);
 			const testName = buildTestName(info);
 
-			expect(testName).toBe('TestMyFunction/test_case_1');
+			expect(testName).toBe('TestMyFunction/test_case_1/');
 		});
 
 		it('should build test name with slice-based subtest', () => {
@@ -124,7 +124,56 @@ func TestMyFunction(t *testing.T) {
 			const info = findTestInfo(doc, 8);
 			const testName = buildTestName(info);
 
-			expect(testName).toBe('TestMyFunction/do_nothing_when_empty');
+			expect(testName).toBe('TestMyFunction/do_nothing_when_empty/');
+		});
+	});
+
+	describe('Slice-Based Subtests where name contains same prefix', () => {
+		it('should detect subtest name from slice struct name field', () => {
+			const content = `package mypackage
+
+func TestMyFunction(t *testing.T) {
+	tests := []struct {
+		name     string
+		input    string
+		expected string
+	}{
+		{
+			name:     "test case",
+			input:    "foo",
+			expected: "bar",
+		},
+		{
+			name:     "test case 2",
+			input:    "foo",
+			expected: "bar",
+		},
+	}
+}`;
+			const doc = createMockDocument(content);
+			const info = findTestInfo(doc, 9);
+			const testName = buildTestName(info);
+
+			expect(testName).toBe('TestMyFunction/test_case/');
+		});
+
+		it('should build test name with slice-based subtest', () => {
+			const content = `package mypackage
+
+func TestMyFunction(t *testing.T) {
+	tests := []struct {
+		name string
+	}{
+		{
+			name: "do nothing when empty",
+		},
+	}
+}`;
+			const doc = createMockDocument(content);
+			const info = findTestInfo(doc, 8);
+			const testName = buildTestName(info);
+
+			expect(testName).toBe('TestMyFunction/do_nothing_when_empty/');
 		});
 	});
 
@@ -204,7 +253,7 @@ func TestMySuite(t *testing.T) {
 			const info = findTestInfo(doc, 9);
 			const testName = buildTestName(info);
 
-			expect(testName).toBe('TestMySuite/TestWithSubtests/subtest_1');
+			expect(testName).toBe('TestMySuite/TestWithSubtests/subtest_1/');
 		});
 
 		it('should build test name with suite runner and subtest', () => {
@@ -225,7 +274,7 @@ func TestMySuite(t *testing.T) {
 			const info = findTestInfo(doc, 5);
 			const testName = buildTestName(info);
 
-			expect(testName).toBe('TestMySuite/TestWithSubtests/subtest_1');
+			expect(testName).toBe('TestMySuite/TestWithSubtests/subtest_1/');
 		});
 	});
 
@@ -254,7 +303,7 @@ func TestTicketSuite(t *testing.T) {
 			const info = findTestInfo(doc, 10);
 			const testName = buildTestName(info);
 
-			expect(testName).toBe('TestTicketSuite/TestUpdate/do_nothing_-_when_is_testing');
+			expect(testName).toBe('TestTicketSuite/TestUpdate/do_nothing_-_when_is_testing/');
 		});
 
 		it('should build test name with suite runner and slice subtest', () => {
@@ -277,7 +326,7 @@ func TestMyTestSuite(t *testing.T) {
 			const info = findTestInfo(doc, 8);
 			const testName = buildTestName(info);
 
-			expect(testName).toBe('TestMyTestSuite/TestUpdate/do_nothing_-_when_is_testing');
+			expect(testName).toBe('TestMyTestSuite/TestUpdate/do_nothing_-_when_is_testing/');
 		});
 	});
 
