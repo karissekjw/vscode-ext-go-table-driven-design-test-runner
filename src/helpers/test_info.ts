@@ -118,7 +118,7 @@ export function buildTestName(info: ReturnType<typeof findTestInfo> | null): str
 
   // Receiver method with suite runner: TestRunner/TestMethod/subtest
   if (suiteRunnerName && testMethodName && subtestName) {
-    return `${suiteRunnerName}/${testMethodName}/${toSnakeCase(subtestName)}`;
+    return `${suiteRunnerName}/${testMethodName}/${toSnakeCase(subtestName)}/`;
   }
 
   // Receiver method with suite runner: TestRunner/TestMethod
@@ -128,7 +128,7 @@ export function buildTestName(info: ReturnType<typeof findTestInfo> | null): str
 
   // Standalone test with subtest: TestFunc/subtest
   if (testMethodName && subtestName) {
-    return `${testMethodName}/${toSnakeCase(subtestName)}`;
+    return `${testMethodName}/${toSnakeCase(subtestName)}/`;
   }
 
   // Standalone test: TestFunc
